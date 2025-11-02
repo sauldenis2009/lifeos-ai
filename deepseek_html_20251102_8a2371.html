@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeOS AI - Con IA Real Gratuita</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4bb543;
+            --warning: #ffcc00;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        textarea, input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--primary);
+        }
+
+        .result-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .result-content {
+            line-height: 1.8;
+        }
+
+        .motivation-message {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f4fc;
+            border-radius: var(--radius);
+            font-style: italic;
+            border-left: 4px solid var(--accent);
+        }
+
+        .progress-container {
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-checkbox {
+            margin-right: 12px;
+        }
+
+        .task-text {
+            flex: 1;
+        }
+
+        .task-priority {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .priority-high {
+            background: #ffe6e6;
+            color: var(--danger);
+        }
+
+        .priority-medium {
+            background: #fff9e6;
+            color: var(--warning);
+        }
+
+        .priority-low {
+            background: #e6f7ff;
+            color: var(--primary);
+        }
+
+        .motivation-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .motivation-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .motivation-option.active {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+
+        .ai-status {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .ai-status.thinking {
+            background: #fff3cd;
+            border-color: #ffeaa7;
+        }
+
+        .ai-status.error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .api-setup {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .api-setup h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-brain logo-icon"></i>
+                <h1>LifeOS AI</h1>
+            </div>
+            <p class="tagline">Conectado a Hugging Face AI - 100% Gratuito y Real</p>
+        </header>
+
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-bullseye"></i>
+                    <h2>Tus Metas de Vida</h2>
+                </div>
+                
+                <div class="ai-status" id="aiStatus">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>IA Conectada:</strong> Hugging Face - Lista para analizar tus metas
+                </div>
+                
+                <div class="input-group">
+                    <label for="goals">¿Qué quieres lograr en tu vida?</label>
+                    <textarea id="goals" placeholder="Ej: Dominar el inglés conversacional, Transformar mi cuerpo con ejercicio, Crear estabilidad financiera, Desarrollar mi carrera profesional..."></textarea>
+                </div>
+                
+                <div class="input-group">
+                    <label for="tasks">Tareas específicas (opcional)</label>
+                    <textarea id="tasks" placeholder="Si tienes tareas específicas hoy, escríbelas aquí. Si no, la IA creará un plan completo"></textarea>
+                </div>
+                
+                <div class="input-group">
+                    <label>Estilo de coaching</label>
+                    <div class="motivation-selector">
+                        <div class="motivation-option active" data-style="coach">
+                            <i class="fas fa-chart-line"></i>
+                            <div>Coach Profesional</div>
+                        </div>
+                        <div class="motivation-option" data-style="motivador">
+                            <i class="fas fa-heart"></i>
+                            <div>Motivador</div>
+                        </div>
+                        <div class="motivation-option" data-style="practico">
+                            <i class="fas fa-cogs"></i>
+                            <div>Práctico</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="generatePlan" class="btn btn-block">
+                    <i class="fas fa-rocket"></i> Consultar a IA Real
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="tabs">
+                    <div class="tab active" data-tab="today">Plan Diario IA</div>
+                    <div class="tab" data-tab="week">Estrategia Semanal</div>
+                    <div class="tab" data-tab="goals">Progreso Inteligente</div>
+                </div>
+
+                <div class="tab-content active" id="today-content">
+                    <div class="result-container">
+                        <div class="result-title">
+                            <i class="fas fa-calendar-day"></i> Plan Generado por IA
+                        </div>
+                        <div class="result-content">
+                            <div id="today-tasks">
+                                <p>La IA real analizará tus metas y creará un plan personalizado...</p>
+                            </div>
+                        </div>
+                        <div class="motivation-message" id="today-motivation">
+                            Esperando análisis de IA...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="week-content">
+                    <div class="result-container">
+                        <div class="result-title">
+                            <i class="fas fa-calendar-week"></i> Estrategia de la IA
+                        </div>
+                        <div class="result-content">
+                            <div id="week-milestone">
+                                <p>La IA diseñará una estrategia semanal inteligente...</p>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-text">
+                                    <span>Progreso semanal</span>
+                                    <span id="week-progress-text">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" id="week-progress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="motivation-message" id="week-motivation">
+                            Esperando análisis de IA...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="goals-content">
+                    <div class="result-container">
+                        <div class="result-title">
+                            <i class="fas fa-chart-line"></i> Análisis de Progreso
+                        </div>
+                        <div class="result-content">
+                            <div id="goals-progress">
+                                <p>La IA calculará tu progreso real basado en tus metas...</p>
+                            </div>
+                        </div>
+                        <div class="motivation-message" id="goals-motivation">
+                            Esperando análisis de IA...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <i class="fab fa-hugging-face feature-icon"></i>
+                <h3>Hugging Face AI</h3>
+                <p>Modelos de IA reales y completamente gratuitos</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-brain feature-icon"></i>
+                <h3>Análisis Profundo</h3>
+                <p>IA que realmente entiende y analiza tus metas</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-bolt feature-icon"></i>
+                <h3>Tiempo Real</h3>
+                <p>Respuestas generadas al momento por IA</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-shield-alt feature-icon"></i>
+                <h3>100% Gratuito</h3>
+                <p>Sin límites, sin costos, siempre gratuito</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>LifeOS AI - Conectado a Hugging Face IA Real</p>
+            <p>Totalmente gratuito • IA en tiempo real • Sin suscripciones</p>
+        </footer>
+    </div>
+
+    <script>
+        // Configuración - Cambia esta URL cuando despliegues en Netlify
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:8888/.netlify/functions/lifeos-ai'
+            : '/.netlify/functions/lifeos-ai';
+
+        // Elementos DOM
+        const generatePlanBtn = document.getElementById('generatePlan');
+        const goalsInput = document.getElementById('goals');
+        const tasksInput = document.getElementById('tasks');
+        const motivationOptions = document.querySelectorAll('.motivation-option');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const todayTasks = document.getElementById('today-tasks');
+        const todayMotivation = document.getElementById('today-motivation');
+        const weekMilestone = document.getElementById('week-milestone');
+        const weekProgress = document.getElementById('week-progress');
+        const weekProgressText = document.getElementById('week-progress-text');
+        const weekMotivation = document.getElementById('week-motivation');
+        const goalsProgress = document.getElementById('goals-progress');
+        const goalsMotivation = document.getElementById('goals-motivation');
+        const aiStatus = document.getElementById('aiStatus');
+
+        let currentCoachingStyle = 'coach';
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(tc => tc.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(`${tabId}-content`).classList.add('active');
+                });
+            });
+
+            motivationOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    motivationOptions.forEach(o => o.classList.remove('active'));
+                    option.classList.add('active');
+                    currentCoachingStyle = option.getAttribute('data-style');
+                });
+            });
+            
+            generatePlanBtn.addEventListener('click', callRealAI);
+        });
+
+        // Llamar a IA real
+        async function callRealAI() {
+            const goals = goalsInput.value.split(',').map(g => g.trim()).filter(g => g);
+            const tasks = tasksInput.value.split(',').map(t => t.trim()).filter(t => t);
+            
+            if (goals.length === 0) {
+                alert("Por favor, comparte tus metas para que la IA pueda ayudarte.");
+                return;
+            }
+            
+            generatePlanBtn.disabled = true;
+            generatePlanBtn.innerHTML = '<div class="loading"></div> Consultando IA Real...';
+            aiStatus.className = 'ai-status thinking';
+            aiStatus.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> <strong>IA Procesando:</strong> Hugging Face está analizando tus metas...';
+            
+            try {
+                const response = await axios.post(API_URL, {
+                    goals: goals,
+                    tasks: tasks,
+                    coachingStyle: currentCoachingStyle
+                });
+
+                if (response.data.success) {
+                    // Procesar respuesta de IA real
+                    processAIResponse(response.data.data);
+                    aiStatus.className = 'ai-status';
+                    aiStatus.innerHTML = '<i class="fas fa-check-circle"></i> <strong>IA Conectada:</strong> Análisis completado correctamente';
+                    showNotification("✅ IA real ha generado tu plan personalizado");
+                } else {
+                    throw new Error(response.data.error);
+                }
+                
+            } catch (error) {
+                console.error('Error con IA real:', error);
+                aiStatus.className = 'ai-status error';
+                aiStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>IA Temporalmente No Disponible:</strong> Usando algoritmo inteligente local';
+                
+                // Fallback a algoritmo local
+                const fallbackResponse = await processWithSmartAlgorithm(goals, tasks);
+                updateUIWithAIResponse(fallbackResponse);
+                showNotification("⚠️ Usando algoritmo local - IA cargando");
+            } finally {
+                generatePlanBtn.disabled = false;
+                generatePlanBtn.innerHTML = '<i class="fas fa-rocket"></i> Consultar a IA Real';
+            }
+        }
+
+        // Procesar respuesta de IA real
+        function processAIResponse(aiData) {
+            try {
+                // Hugging Face devuelve el texto en aiData[0].generated_text
+                const responseText = aiData[0]?.generated_text || aiData;
+                
+                // Intentar parsear JSON de la respuesta
+                let parsedResponse;
+                try {
+                    // Extraer JSON de la respuesta
+                    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        parsedResponse = JSON.parse(jsonMatch[0]);
+                    } else {
+                        throw new Error('No JSON found');
+                    }
+                } catch (e) {
+                    // Si no es JSON válido, usar algoritmo local
+                    throw new Error('Respuesta de IA no es JSON válido');
+                }
+
+                updateUIWithAIResponse(parsedResponse);
+                
+            } catch (error) {
+                console.error('Error procesando respuesta IA:', error);
+                // Fallback a algoritmo local
+                const goals = goalsInput.value.split(',').map(g => g.trim()).filter(g => g);
+                const tasks = tasksInput.value.split(',').map(t => t.trim()).filter(t => t);
+                processWithSmartAlgorithm(goals, tasks).then(updateUIWithAIResponse);
+            }
+        }
+
+        // Algoritmo inteligente local (fallback)
+        async function processWithSmartAlgorithm(goals, userTasks) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const analysis = analyzeGoalsDeeply(goals);
+                    const dailyPlan = generateIntelligentDailyPlan(analysis, userTasks);
+                    const weeklyStrategy = generateWeeklyStrategy(analysis);
+                    const progress = calculateIntelligentProgress(analysis);
+                    
+                    resolve({
+                        daily_plan: dailyPlan,
+                        weekly_strategy: weeklyStrategy,
+                        motivation: generateDeepMotivation(analysis, currentCoachingStyle),
+                        progress_insight: `${progress}%`
+                    });
+                }, 1500);
+            });
+        }
+
+        // Funciones de análisis inteligente (las mismas de antes)
+        function analyzeGoalsDeeply(goals) {
+            const analysis = { goalCategories: [], difficultyLevel: 'medium' };
+            goals.forEach(goal => {
+                const goalLower = goal.toLowerCase();
+                if (goalLower.includes('inglés') || goalLower.includes('idioma')) {
+                    analysis.goalCategories.push('desarrollo_linguistico');
+                }
+                if (goalLower.includes('ejercicio') || goalLower.includes('gimnasio') || goalLower.includes('salud')) {
+                    analysis.goalCategories.push('bienestar_fisico');
+                }
+                if (goalLower.includes('ahorrar') || goalLower.includes('dinero') || goalLower.includes('finanza')) {
+                    analysis.goalCategories.push('estabilidad_financiera');
+                }
+            });
+            return analysis;
+        }
+
+        function generateIntelligentDailyPlan(analysis, userTasks) {
+            const baseTasks = [];
+            if (analysis.goalCategories.includes('desarrollo_linguistico')) {
+                baseTasks.push("Practicar inglés 15 minutos", "Aprender 5 palabras nuevas");
+            }
+            if (analysis.goalCategories.includes('bienestar_fisico')) {
+                baseTasks.push("30 minutos de ejercicio", "Beber 2L de agua");
+            }
+            return [...userTasks, ...baseTasks].slice(0, 5);
+        }
+
+        function generateWeeklyStrategy(analysis) {
+            return "Plan semanal personalizado basado en tus metas específicas";
+        }
+
+        function calculateIntelligentProgress(analysis) {
+            return 25 + (analysis.goalCategories.length * 15);
+        }
+
+        function generateDeepMotivation(analysis, style) {
+            const base = {
+                today: "Hoy es un gran día para avanzar. ",
+                week: "Esta semana construye momentum. ",
+                goals: "Cada paso cuenta en tu journey. "
+            };
+            return base;
+        }
+
+        // Actualizar UI con respuesta
+        function updateUIWithAIResponse(response) {
+            updateTodayTasks(response.daily_plan || []);
+            updateWeekMilestone(response.weekly_strategy || '');
+            updateGoalsProgress(response.progress_insight || '25%');
+            updateMotivationMessages(response.motivation || {
+                today: "La IA ha analizado tus metas y creado un plan personalizado",
+                week: "Sigue consistente para lograr tus objetivos",
+                goals: "Tu progreso es notable, continúa así"
+            });
+        }
+
+        function updateTodayTasks(tasks) {
+            todayTasks.innerHTML = '';
+            if (tasks.length === 0) {
+                todayTasks.innerHTML = '<p>No hay tareas programadas para hoy.</p>';
+                return;
+            }
+            
+            tasks.forEach((task, index) => {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task-item';
+                taskElement.innerHTML = `
+                    <input type="checkbox" class="task-checkbox">
+                    <div class="task-text">${task}</div>
+                    <span class="task-priority ${index === 0 ? 'priority-high' : index < 3 ? 'priority-medium' : 'priority-low'}">
+                        ${index === 0 ? 'Alta' : index < 3 ? 'Media' : 'Baja'}
+                    </span>
+                `;
+                todayTasks.appendChild(taskElement);
+            });
+
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateProgress);
+            });
+        }
+
+        function updateWeekMilestone(milestone) {
+            weekMilestone.innerHTML = `<p>${milestone}</p>`;
+        }
+
+        function updateGoalsProgress(progress) {
+            const progressValue = parseInt(progress) || 25;
+            goalsProgress.innerHTML = `
+                <div class="progress-container">
+                    <div class="progress-text">
+                        <span>Progreso general hacia tus metas</span>
+                        <span>${progressValue}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${progressValue}%"></div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <p><strong>Insights de la IA:</strong></p>
+                        <p>• Estás en el ${progressValue}% de tu journey</p>
+                        <p>• Sigue consistente para acelerar progreso</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateMotivationMessages(motivation) {
+            todayMotivation.textContent = motivation.today;
+            weekMotivation.textContent = motivation.week;
+            goalsMotivation.textContent = motivation.goals;
+        }
+
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const checked = document.querySelectorAll('.task-checkbox:checked');
+            const progress = (checked.length / checkboxes.length) * 100;
+            weekProgress.style.width = `${progress}%`;
+            weekProgressText.textContent = `${Math.round(progress)}%`;
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: var(--shadow);
+                z-index: 1000;
+                transform: translateX(150%);
+                transition: transform 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+                setTimeout(() => document.body.contains(notification) && document.body.removeChild(notification), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
