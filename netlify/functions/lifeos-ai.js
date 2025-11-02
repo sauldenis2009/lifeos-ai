@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -102,4 +102,5 @@ exports.handler = async (event) => {
       })
     };
   }
+
 };
